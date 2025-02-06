@@ -1,0 +1,38 @@
+name: surfpool
+summary: Surfpool is the best place to train before surfing Solana
+description: |
+  # surfpool
+
+  ### TL;DR
+
+  `surfpool` is to solana what `anvil` is to ethereum: a blazing fast in-memory testnet that has the ability to point-fork Solana mainnet instantly.
+
+  ### Design
+
+  `surfpool` uses the low level `solana-svm` API through the excellent wrapper [LiteSVM](https://github.com/LiteSVM/litesvm).
+  This approach provides greater flexibility and significantly faster boot times.
+
+  `surfpool` is also available as a library on crates.io - facilitating its integration in other projects.
+
+version: 'v0.0.0'
+
+base: core22
+confinement: strict
+
+parts:
+  surfpool-install:
+    source: https://github.com/txtx/surfpool/releases/download/v0.0.0/surfpool-linux-x64.tar.gz
+    plugin: dump
+    source-type: tar
+    organize: 
+      surfpool-linux-x64/surfpool: usr/local/bin/surfpool
+
+apps:
+  surfpool:
+    command: surfpool
+    plugs:
+     - network
+     - network-bind
+     - mount-observe
+     - home
+     - desktop
