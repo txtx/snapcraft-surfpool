@@ -35,4 +35,3 @@ apps:
      - network-bind
      - mount-observe
      - home
-     - desktop
