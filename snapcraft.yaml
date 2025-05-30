@@ -22,16 +22,41 @@ confinement: strict
 parts:
   surfpool-install:
     source: https://github.com/txtx/surfpool/releases/download/v0.4.0/surfpool-linux-x64.tar.gz
-    plugin: dump
-    source-type: tar
-    organize: 
-      surfpool-linux-x64/surfpool: usr/local/bin/surfpool
+    plugin: dump    
+    source-type: tar    
+    # we need the user's actual home directory injected as an ENV var
+    # so we can do appropriate replacements of `~`, so we're wrapping surfpool
+    # in `launch-surfpool.sh`, which adds the env var then calls the actually
+    # runs surfpool when used from a snap containerAdd commentMore actions
+    override-build: |
+      mkdir -p $CRAFT_PART_INSTALL/usr/local/bin
+      ls $CRAFT_PART_SRC
+      cd $CRAFT_PART_SRC
+      pwd
+      # Move binary
+      cp $CRAFT_PART_SRC/surfpool $CRAFT_PART_INSTALL/usr/local/bin/surfpool
+
+      # Create launcher script that sets SNAP_REAL_HOME
+      cat << 'EOF' > $CRAFT_PART_INSTALL/usr/local/bin/launch-surfpool.sh
+      #!/bin/bash
+      export SNAP_REAL_HOME="/home/$(id -un)"
+      exec "$SNAP/usr/local/bin/surfpool" "$@"
+      EOF
+
+      chmod +x $CRAFT_PART_INSTALL/usr/local/bin/launch-surfpool.sh
 
 apps:
   surfpool:
-    command: surfpool
+    command: usr/local/bin/launch-surfpool.sh
     plugs:
      - network
      - network-bind
      - mount-observe
      - home
+     - solana-config
+
+plugs: 
+  solana-config:
+    interface: personal-files
+    read:
+      - $HOME/.config/solana
