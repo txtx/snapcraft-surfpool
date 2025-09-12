@@ -14,14 +14,14 @@ description: |
 
   `surfpool` is also available as a library on crates.io - facilitating its integration in other projects.
 
-version: 'v0.10.7'
+version: 'v0.10.8'
 
 base: core22
 confinement: strict
 
 parts:
   surfpool-install:
-    source: https://github.com/txtx/surfpool/releases/download/v0.10.7/surfpool-linux-x64.tar.gz
+    source: https://github.com/txtx/surfpool/releases/download/v0.10.8/surfpool-linux-x64.tar.gz
     plugin: dump    
     source-type: tar    
     # we need the user's actual home directory injected as an ENV var
